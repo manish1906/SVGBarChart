@@ -56,16 +56,15 @@
 <body ng-app="barchartapp">
     <div ng-controller="barchartController as ctrl" ng-init="initChart()">
         <p> </p>
-         <!-- <div class="bchartcontainer body">
-       
-        <div id="barchartid" >
+         <div class="bchartcontainer body">
             <button ng-click="myFunc1()">data-1</button>
             <button ng-click="myFunc2()">data-2</button>
-
+        <div id="barchartid" >           
+            
             <svg-chart items="chartDataList" xaxisitemskey="surname" yaxisitemskey="value" orderbykey="lastUpdated">
             </svg-chart>
         </div> 
-    </div> -->
+    </div>
         <!-- <div id="dvcontainer">
             <canvas-bar-chart items="chartDataList" xaxisitemskey="name" yaxisitemskey="value" orderbykey="lastUpdated">
             </canvas-bar-chart>
@@ -78,19 +77,20 @@
         <section class="">
             <div class="container">
                 <div class="offset-top">
-                    <div class="chart" id="barchartid">
-                        <svg-chart items="chartDataList" xaxisitemskey="surname" yaxisitemskey="value"
-                            orderbykey="lastUpdated"></svg-chart>
-
-                    </div>
+                    
+                        <!-- <div class="chart" id="barchartid">
+                            <svg-chart items="chartDataList" xaxisitemskey="surname" yaxisitemskey="value"
+                                orderbykey="lastUpdated"></svg-chart>
+                        </div> -->
+                
                 </div>
 
-                <!-- <div class="offset-all">
-                    <div class="chart" id="barchartid">
+                <div class="offset-all">
+                    <!-- <div class="chart" id="barchartid">
                         <svg-chart items="chartDataList" xaxisitemskey="surname" yaxisitemskey="value" orderbykey="lastUpdated"></svg-chart>
-                    </div>
+                    </div> -->
                 </div>
-            </div> -->
+            </div>
         </section>
     </div>
 

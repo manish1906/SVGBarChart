@@ -1,3 +1,5 @@
+//const { $ } = require("protractor");
+
 var appChartDirective = angular.module('app-chart.directive', []);
 appChartDirective.directive("svgChart", function ($filter, $compile) {
     return {
@@ -205,11 +207,11 @@ appChartDirective.directive("svgChart", function ($filter, $compile) {
             };
             scope.buildToolTipElement = function () {
                 if (!this.popoverEl) {
-                    this.popoverTpl = '<span id=tip></span>';
+                    this.popoverTpl = '<span></span>';
 
                     this.popoverEl = $compile(this.popoverTpl)(scope);
-                    element.append(this.popoverEl);
-                    //    $("#svgcontainer").parent().append(this.popoverEl);
+                   // element.append(this.popoverEl);
+                       $("body").append(this.popoverEl);
                 }
             };
             scope.updateToolTipPosition = function (y, ht) {
@@ -220,23 +222,34 @@ appChartDirective.directive("svgChart", function ($filter, $compile) {
                 this.popoverEl.show();
                 var boxWidth = 110;
                 var boxHeight = 25;
-                var xposition = event.pageX;   
+                var xposition = event.pageX+10;   
                 var yposition = event.pageY;
-              
-               var offset = $("#barchartid").parent().offset();
-               //console.log("offset"+offset.top)
-                //If tooltip is end of with then change position of tooltip
+                var div = document.getElementById("barchartid");
+                var chart = div.getBoundingClientRect();
+                console.log("top"+chart.top)
+                console.log("left"+chart.left)
+            
+              var scrollTop= $(window).scrollTop();          
+             
+              //If tooltip is end of with then change position of tooltip
                 if (event.pageX + boxWidth > scope.width) {
-
-                    xposition = xposition - boxWidth-offset.left;
-                   
+                    
+                    xposition = xposition - boxWidth-25;                   
                 }
-                if (event.pageY + boxHeight+offset.top >= y + ht ) {
+                if (event.pageY + boxHeight >= y + ht ) {
+                 // debugger
+                    yposition = yposition - boxHeight;
+                   // debugger
+                }
+                //console.log("xposition"+xposition+"yposition"+yposition)
+                if(chart.top > yposition-scrollTop)
+                {
+                  //  debugger
+                    yposition=yposition+boxHeight
                     //debugger
-                    yposition = yposition - boxHeight-offset.top;
-
                 }
-              //  console.log("xposition"+xposition+"yposition"+yposition)
+ console.log("-posito"+(yposition-scrollTop))
+                console.log("xposition"+xposition+"yposition"+yposition)
                // yposition = yposition -185;
                 this.popoverEl
                     .css({
