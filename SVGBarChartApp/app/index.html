@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Bar Chart</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.9/angular.js"></script>
+
+    <script src="app.js"></script>
+    <script src="Scripts/controller/simple-bar-chart-controller.js"></script>
+    <script src="Scripts/directive/app-chart-directive.js"></script>
+    <script src="Scripts/directive/bar-chart-svg.js"></script>
+    <link rel="stylesheet" type="text/css" href="Style/appChart.css">
+
+    <style type="text/css">
+        /* #tip {
+            background-color: white;
+            border: 1px solid blue;
+            position: absolute;
+            font-size: 11px;
+            font-family: 'Segoe UI';
+        } */
+
+        .container {
+            width: 100%;
+            padding-right: 15px;
+            padding-left: 15px;
+            margin-right: auto;
+            margin-left: auto;
+            max-width: 1170px;
+            position: absolute;
+            margin-top: 30px;
+        }
+
+        .offset-top {
+            padding-top: 200px;
+            /*overflow: auto;*/
+        }
+
+        .offset-top .chart,
+        .offset-all .chart {
+            max-height: 200px;
+            overflow: auto;
+            /*margin:50px*/
+        }
+
+        .offset-all {
+            padding: 100px;
+        }
+    </style>
+
+</head>
+
+<body ng-app="barchartapp">
+    <div ng-controller="barchartController as ctrl" ng-init="initChart()">
+        <p> </p>
+         <!-- <div class="bchartcontainer body">
+       
+        <div id="barchartid" >
+            <button ng-click="myFunc1()">data-1</button>
+            <button ng-click="myFunc2()">data-2</button>
+
+            <svg-chart items="chartDataList" xaxisitemskey="surname" yaxisitemskey="value" orderbykey="lastUpdated">
+            </svg-chart>
+        </div> 
+    </div> -->
+        <!-- <div id="dvcontainer">
+            <canvas-bar-chart items="chartDataList" xaxisitemskey="name" yaxisitemskey="value" orderbykey="lastUpdated">
+            </canvas-bar-chart>
+        </div> -->
+        <!--</div>-->
+
+        <div id="barcrd"> </div>
+ 
+        <!--offset testing-->
+        <section class="">
+            <div class="container">
+                <div class="offset-top">
+                    <div class="chart" id="barchartid">
+                        <svg-chart items="chartDataList" xaxisitemskey="surname" yaxisitemskey="value"
+                            orderbykey="lastUpdated"></svg-chart>
+
+                    </div>
+                </div>
+
+                <!-- <div class="offset-all">
+                    <div class="chart" id="barchartid">
+                        <svg-chart items="chartDataList" xaxisitemskey="surname" yaxisitemskey="value" orderbykey="lastUpdated"></svg-chart>
+                    </div>
+                </div>
+            </div> -->
+        </section>
+    </div>
+
+</body>
+
+</html>

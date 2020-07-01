@@ -1,0 +1,20 @@
+﻿.bchartcontainer {
+    margin: 20px;
+    padding: 20px;
+}
+.header {
+    position: absolute;
+    height: 100px;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+.body {
+    position: relative;
+    left: 0;
+    right: 0;
+    top: 100px;
+    bottom: 0;
+    overflow: scroll;
+    width: 100%;
+}
