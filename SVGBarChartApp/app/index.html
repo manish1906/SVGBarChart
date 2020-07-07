@@ -12,6 +12,7 @@
     <script src="Scripts/controller/simple-bar-chart-controller.js"></script>
     <script src="Scripts/directive/app-chart-directive.js"></script>
     <script src="Scripts/directive/bar-chart-svg.js"></script>
+    <script src="Scripts/directive/line-chart-svg.js"></script>
     <link rel="stylesheet" type="text/css" href="Style/appChart.css">
 
     <style type="text/css">
@@ -61,8 +62,8 @@
             <button ng-click="myFunc2()">data-2</button>
         <div id="barchartid" >           
             
-            <svg-chart items="chartDataList" xaxisitemskey="surname" yaxisitemskey="value" orderbykey="lastUpdated">
-            </svg-chart>
+            <line-chart items="chartDataList" xaxisitemskey="surname" yaxisitemskey="value" orderbykey="lastUpdated">
+            </line-chart>
         </div> 
     </div>
         <!-- <div id="dvcontainer">

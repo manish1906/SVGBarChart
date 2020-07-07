@@ -1,5 +1,3 @@
-//const { $ } = require("protractor");
-
 var appChartDirective = angular.module('app-chart.directive', []);
 appChartDirective.directive("svgChart", function ($filter, $compile) {
     return {
@@ -12,7 +10,7 @@ appChartDirective.directive("svgChart", function ($filter, $compile) {
             orderByKey: '@orderbykey'
         },
         link: function (scope, element, $rootScope) {
-            scope.scrollableparentid = "";
+
             var $destroy = scope.$on("$destroy", function () {
                 $destroy();
                 $destroy = null;
@@ -31,14 +29,19 @@ appChartDirective.directive("svgChart", function ($filter, $compile) {
                 }
             );
 
+            //Call while window resize
             $(window).resize(function () {
                 scope.drawBarChart();
             });
 
-            //Function to specify Chart settings
+            //Draw barchart
             scope.drawBarChart = function () {
-                if ($("#svgcontainer").length > 0) {
-                    $("#svgcontainer").empty();
+                if ($("#svgcontainer_" + scope.$id).length > 0) {
+                    $("#svgcontainer_" + scope.$id).empty();
+                    this.popoverEl = null;
+                }
+                if ($("#tip_" + scope.$id).length > 0) {
+                    $("#tip_" + scope.$id).remove();
                 }
                 scope.svgObj = {
                     padding: 20,
@@ -46,42 +49,38 @@ appChartDirective.directive("svgChart", function ($filter, $compile) {
                     data: $filter('orderBy')(scope.chartDataItem, scope.orderByKey, true),
                     barWidth: 50,
                     maximumDataValue: 100,
-                    maxTicksLimit: 5
+                    maxTicksLimit: 5,
+                    toolTipHeight: 40,
+                    toolTipWeight: 100
                 };
-                scope.width = $("#svgcontainer").parent().width();
-                scope.height = $("#svgcontainer").height();
+                //Variables
+                scope.scrollableParentId = "";
+                scope.width = $("#svgcontainer_" + scope.$id).parent().width();
+                scope.height = $("#svgcontainer_" + scope.$id).height();
                 scope.padding = scope.svgObj.padding;
+                scope.barSize = scope.svgObj.barWidth;
+                var svgChartWidth = scope.width - 2 * scope.padding;
+                var svgChartHeight = scope.height - 2 * scope.padding;
 
-                var div = document.getElementById("svgcontainer");
-
+                var div = document.getElementById("svgcontainer_" + scope.$id);
                 var rect = div.getBoundingClientRect();
                 scope.x = rect.left;
                 scope.y = rect.top;
-                console.log("left"+scope.x+"top"+scope.y);
-                var svgChartWidth = scope.width - 2 * scope.padding;
-                var svgChartHeight = scope.height - 2 * scope.padding;
-                console.log(svgChartWidth)
-                scope.totalChartBars = Math.round(svgChartWidth / scope.svgObj.barWidth);
-                scope.barSize = scope.svgObj.barWidth;
+
+                //Calculate the possible max items/bars to be print and assigned to the data-list
+                scope.totalChartBars = Math.floor(svgChartWidth / scope.svgObj.barWidth);
                 scope.remainNumberOfBars = scope.totalChartBars - scope.svgObj.data.length;
                 scope.chartDataList = $filter('limitTo')(scope.svgObj.data, scope.totalChartBars, 0);
                 var length = scope.chartDataList.length;
-
-                scope.nameList = []; //For Tooltip purpose
-                for (i = 0; i < scope.chartDataList.length; i++)
-                    scope.nameList.push({ 'barName': scope.chartDataList[i][scope.xAxisItemsKey] });
-
+              // debugger
                 //Add empty bars at left side if chart does not have sufficient bars
                 if (scope.totalChartBars > scope.chartDataList.length) {
                     for (i = 0; i < scope.totalChartBars - length; i++) {
                         scope.chartDataList.push({ [scope.xAxisItemsKey]: "0", "value": "0", "index": length + i });
-                        scope.nameList.push({ 'barName': "0", "index": length + i });
                     }
                 }
                 scope.drawYAxisMarkers(svgChartHeight);
                 scope.drawChartWithCalculation(svgChartHeight);
-                console.log(scope.nameList);
-               // debugger
             };
             //Ends Here
 
@@ -95,12 +94,6 @@ appChartDirective.directive("svgChart", function ($filter, $compile) {
                 }
                 const incrBy = Math.round(scope.maxDataValue / scope.svgObj.maxTicksLimit);
 
-                ////Next level deveopment: Dynamic Y-axis value print  on Hold
-                //var incrBy = scope.determineStepSize();
-                // var extensionNumber = 0;
-                //var extensionNumber = ((incrBy * Math.ceil(scope.maxDataValue / incrBy)) - scope.maxDataValue);
-                // while (labelOnYAxis <= (scope.maxDataValue + extensionnumber)) {
-
                 while (labelOnYAxis <= (scope.maxDataValue)) {
                     const markerVal = labelOnYAxis;
                     const xMarkers = scope.padding;
@@ -111,12 +104,13 @@ appChartDirective.directive("svgChart", function ($filter, $compile) {
                     textelement.setAttribute('font-size', 'smaller');
                     txtnode = document.createTextNode(markerVal);
                     textelement.appendChild(txtnode);
-                    document.getElementById('svgcontainer').appendChild(textelement);
+                    document.getElementById('svgcontainer_' + scope.$id).appendChild(textelement);
                     labelOnYAxis = labelOnYAxis + incrBy;
                 }
             };
             //Ends Here
-            //Function to draw barchart for all entries in the  Array
+
+            //Set the x, y, h and w to draw barchart rectangle 
             scope.drawChartWithCalculation = function (svgChartHeight) {
                 for (var i = 0; i < scope.totalChartBars; i++) {
                     const remain = scope.totalChartBars - 1;
@@ -124,18 +118,46 @@ appChartDirective.directive("svgChart", function ($filter, $compile) {
                     barChartHeight = (barChartVal * svgChartHeight / scope.maxDataValue);
                     barChartX = 2 * scope.padding + i * scope.barSize;
                     barChartY = (scope.padding + svgChartHeight - barChartHeight);
-                    scope.drawRectangleForChart(barChartX, barChartY, scope.barSize - 8, barChartHeight);
-                    //Add x1, x2 property to the nameList array for tooltip purpose
-                    scope.nameList[remain - i]["x1"] = Math.round(barChartX + scope.x);
-                    scope.nameList[remain - i]["x2"] = barChartX + scope.barSize + scope.x;
-                    scope.nameList[remain - i]["y1"] = barChartY+scope.y;
-                    scope.nameList[remain - i]["y2"] =barChartY+barChartHeight+scope.y;
-                   // debugger
+                    scope.drawRectangleForChart(barChartX, barChartY, scope.barSize - 8, barChartHeight, i);
                 }
                 scope.drawXAxisMarkers(svgChartHeight);
             };
 
-            //Function to Draw Markers on the X Axis
+            //Draw rectangle and set the mouse event to each and every rectangle
+            scope.drawRectangleForChart = function (x, y, wd, ht, index) {
+                var rect = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
+                rect.setAttribute('id', 'svgrec_' + index + scope.$id);
+                rect.setAttribute('class', 'rec_show');
+                rect.setAttribute('x', x);
+                rect.setAttribute('y', y);
+                rect.setAttribute('width', wd);
+                rect.setAttribute('height', ht);
+                rect.setAttribute('fill', scope.svgObj.gridColor);
+
+                //mousemove event on rect element
+                $(rect).mousemove(function (event) {
+                    
+                    rectangle = document.getElementById('svgtext_' + event.target.id.split('_')[1]);
+                    $("#tip_" + scope.$id).text("Name: " + rectangle.textContent + " X:" + event.pageX + ", Y:" + event.pageY);
+                    document.getElementById('svgrec_' + event.target.id.split('_')[1]).style.opacity = "0.5"
+                    scope.updateToolTipPosition(y, ht, event);
+                });
+
+                //mouseenter event on rect element
+                $(rect).mouseenter(function (event) {
+                    rectangle = document.getElementById('svgtext_' + event.target.id.split('_')[1]);
+                    $("#tip_" + scope.$id).text("Name: " + rectangle.textContent + " X:" + event.pageX + ", Y:" + event.pageY);
+                    scope.updateToolTipPosition(y, ht, event);
+                });
+
+                //mouseleave event on rect element
+                $(rect).mouseleave(function (event) {
+                    document.getElementById('svgrec_' + event.target.id.split('_')[1]).style.opacity = "1"
+                    $("#tip_" + scope.$id).hide()
+                });
+                document.getElementById('svgcontainer_' + scope.$id).appendChild(rect);
+            };
+            //Draw Markers on the X Axis
             scope.drawXAxisMarkers = function (svgChartHeight) {
                 for (var i = 0; i < scope.totalChartBars; i++) {
                     const remain = scope.totalChartBars - 1;
@@ -144,119 +166,90 @@ appChartDirective.directive("svgChart", function ($filter, $compile) {
                     markerYPosition = scope.padding + svgChartHeight + 15;
 
                     textElement = document.createElementNS("http://www.w3.org/2000/svg", 'text');
+                    textElement.setAttribute('id', 'svgtext_' + i + scope.$id);
                     textElement.setAttribute('dx', markerXPosition);
                     textElement.setAttribute('dy', markerYPosition);
                     textElement.setAttribute('font-size', 'smaller');
                     textElement.setAttribute('text-anchor', 'middle');
                     txtNode = document.createTextNode(name);
                     textElement.appendChild(txtNode);
-                    document.getElementById('svgcontainer').appendChild(textElement);
+                    document.getElementById('svgcontainer_' + scope.$id).appendChild(textElement);
                 }
 
-                ////NetxLevel development: Need tO work on tool-tip
-                // var scrollednode = scope.getScrollParent($('#svgcontainer')[0]);
-                // debugger;
-                // scope.scrollableparentid = (scrollednode.id !== undefined ? scrollednode.id : "");
-                // scope.scrollHeight = (scrollednode.scrollHeight !== undefined ? scrollednode.scrollHeight : "");
-                // scope.clientHeight = (scrollednode.clientHeight !== undefined ? scrollednode.clientHeight : "");
-                // if (scope.hasscroll) {
-                //     scope.setScrollTop();
-                // }
+                //Get the scroll parent and scroll value
+                var scrolledNode = scope.getScrollParent($('#svgparentdiv_' + scope.$id)[0]);
+                scope.scrolledNode = scrolledNode;
+                scope.scrollableParentId = (scrolledNode.id !== undefined ? scrolledNode.id : "");
+                scope.scrollHeight = (scrolledNode.scrollHeight !== undefined ? scrolledNode.scrollHeight : "");
+                scope.clientHeight = (scrolledNode.clientHeight !== undefined ? scrolledNode.clientHeight : "");
+                if (scope.hasScroll) {
+                    scope.setScrollTop();
+                }
 
             };
             //Ends Here
-            $(window).mousemove(function (event) {
-                $("p").text(" X:" + event.pageX + ", Y:" + event.pageY);
-            });
-            //Method to Draw rectangle
-            scope.drawRectangleForChart = function (x, y, wd, ht) {
-                var rect = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
-                rect.setAttribute('x', x);
-                rect.setAttribute('y', y);
-                rect.setAttribute('width', wd);
-                rect.setAttribute('height', ht);
-                rect.setAttribute('fill', scope.svgObj.gridColor);
 
-                // $(window).mousemove(function (event) {
 
-                //     $("p").text(" X:" + event.pageX + ", Y:" + event.pageY);
-                // });
-
-                //mousemove event on rect element
-                $(rect).mousemove(function (event) {
-                    var arrx = [];
-
-                    arrx = $.grep(scope.nameList, function (n) {
-                        //debugger;
-                        return (n.x1 <= event.pageX && n.x2 >= event.pageX);
-                    });
-                    if (arrx.length > 0)
-                        $("span").text("Name: " + arrx[0].barName + " X:" + event.pageX + ", Y:" + event.pageY);
-
-                    $("#svgcontainer").mousemove(function (event) {
-                        $("p").text(" X:" + event.pageX + ", Y:" + event.pageY);
-                    });
-
-                    scope.updateToolTipPosition(y, ht);
-                    //debugger
-                });
-                $(rect).mouseleave(function () {
-                    $("span").slideUp();
-                });
-                document.getElementById('svgcontainer').appendChild(rect);
-            };
             scope.buildToolTipElement = function () {
                 if (!this.popoverEl) {
-                    this.popoverTpl = '<span></span>';
+                    this.popoverTpl = '<span id=tip_' + scope.$id + '></span>';
 
                     this.popoverEl = $compile(this.popoverTpl)(scope);
-                   // element.append(this.popoverEl);
-                       $("body").append(this.popoverEl);
+                    // $("#svgparentdiv_" + scope.$id).append(this.popoverEl);
+                    $("body").append(this.popoverEl);
                 }
             };
-            scope.updateToolTipPosition = function (y, ht) {
+            scope.updateToolTipPosition = function (y, ht, event) {
                 if (!this.popoverEl) {
                     scope.buildToolTipElement();
                 }
-
-                this.popoverEl.show();
-                var boxWidth = 110;
-                var boxHeight = 25;
-                var xposition = event.pageX+10;   
-                var yposition = event.pageY;
-                var div = document.getElementById("barchartid");
-                var chart = div.getBoundingClientRect();
-                console.log("top"+chart.top)
-                console.log("left"+chart.left)
-            
-              var scrollTop= $(window).scrollTop();          
-             
-              //If tooltip is end of with then change position of tooltip
-                if (event.pageX + boxWidth > scope.width) {
+                scope.getScroll();
+                var xPosition = event.pageX + 30;
+                var yPosition = event.pageY;
+                //If tooltip is end of with then change position of tooltip
+                if (event.pageX + scope.svgObj.toolTipWeight > scope.width) {
+                    xPosition = xPosition - scope.svgObj.toolTipWeight ;
+                }
+                // if (event.pageY + scope.svgObj.toolTipHeight >= y + ht) {
+                //     yPosition = yPosition - scope.svgObj.toolTipHeight;
+                // }
+               
+                yPosition = yPosition - scope.svgObj.toolTipHeight - 10;
+                var el = document.getElementsByClassName("barscrollparentclass_" + scope.$id);
+                scope.hasScroll = $(el).attr("hasscroll");
+                
+                if (scope.hasScroll) {
+                    var parentOffset = parseInt($(el)[0].offsetParent == 'undefined' ? 0 : $(el)[0].offsetParent.offsetTop);
+                    div = document.getElementById(scope.scrolledNode.id);
                     
-                    xposition = xposition - boxWidth-25;                   
+                    if (parentOffset + div.offsetTop + scope.svgObj.toolTipHeight > event.pageY) {
+                        yPosition = parentOffset + div.offsetTop;
+                    }
+                    if (div.clientWidth + div.offsetLeft < event.pageX + scope.svgObj.toolTipWeight) {
+                        xPosition = div.offsetWidth + div.offsetLeft - (2 * scope.svgObj.toolTipWeight) - (div.offsetWidth - div.clientWidth);
+                    }
+                } else {
+                    div = document.getElementById("svgparentdiv_" + scope.$id);
+                    var parentOffset = parseInt($(div)[0].offsetParent == 'undefined' ? 0 : $(div)[0].offsetParent.offsetTop);
+                    
+                    if (parentOffset + div.offsetTop + scope.svgObj.toolTipHeight > event.pageY) {
+                        yPosition = parentOffset+ div.offsetTop + scope.svgObj.padding ;
+                        xPosition = event.pageX + 50;
+                    } 
+                    if (parentOffset + div.offsetTop + event.offsetY + scope.svgObj.toolTipHeight < event.pageY) {
+                        yPosition = parentOffset+ div.offsetTop + event.offsetY - scope.svgObj.toolTipHeight;
+                    } 
+                    if (event.offsetX + scope.svgObj.toolTipWeight > scope.width) {
+                        xPosition = xPosition - (2 * scope.svgObj.toolTipWeight);
+                    }
                 }
-                if (event.pageY + boxHeight >= y + ht ) {
-                 // debugger
-                    yposition = yposition - boxHeight;
-                   // debugger
-                }
-                //console.log("xposition"+xposition+"yposition"+yposition)
-                if(chart.top > yposition-scrollTop)
-                {
-                  //  debugger
-                    yposition=yposition+boxHeight
-                    //debugger
-                }
- console.log("-posito"+(yposition-scrollTop))
-                console.log("xposition"+xposition+"yposition"+yposition)
-               // yposition = yposition -185;
+
                 this.popoverEl
                     .css({
-                        'left': xposition + 'px',
-                        'top': yposition + 'px',
-                        'height': boxHeight + 'px',
-                        'width': boxWidth + 'px',
+                        'left': xPosition + 'px',
+                        'top': yPosition + 'px',
+                        'height': scope.svgObj.toolTipHeight + 'px',
+                        'width': scope.svgObj.toolTipWeight + 'px',
                         'background-color': 'white',
                         'border': '1px solid blue',
                         'position': 'absolute',
@@ -264,8 +257,52 @@ appChartDirective.directive("svgChart", function ($filter, $compile) {
                         'font-family': 'Segoe UI',
                         'position': 'absolute'
                     });
-            };
 
+                    $("#tip_" + scope.$id).show()
+            };
+            scope.updateToolTipPosition_test = function (y, ht, event) {
+                if (!this.popoverEl) {
+                    scope.buildToolTipElement();
+                }
+                scope.getScroll();
+                var xposition = event.pageX;
+                var yposition = event.pageY;
+                var chartWidth = $('#svgcontainer_' + scope.$id).outerWidth();
+                var offset = $("#svgparentdiv_" + scope.$id).parent().offset();
+                const maxPos = Math.max(xposition) + scope.svgObj.toolTipWeight;
+
+                xposition = xposition - offset.left;
+
+                yposition = $('#svgcontainer_' + scope.$id).height() - (2 * scope.svgObj.padding) - ht - (scope.svgObj.toolTipHeight / 2);
+
+                if (parseInt(event.currentTarget.attributes.y.value) <= scope.svgObj.toolTipHeight) {
+                    yposition = $('#svgcontainer_' + scope.$id).height() - (2 * scope.svgObj.padding) - ht + scope.chartScrollTop;
+                    console.log($('#svgcontainer_' + scope.$id).height() + '-' + scope.chartScrollTop);
+                }
+
+                this.popoverEl
+                    .css({
+                        'left': xposition + 'px',
+                        'top': yposition + 'px',
+                        'height': scope.svgObj.toolTipHeight + 'px',
+                        'width': scope.svgObj.toolTipWeight + 'px',
+                        'background-color': 'white',
+                        'border': '1px solid blue',
+                        'position': 'absolute',
+                        'font-size': '11px',
+                        'font-family': 'Segoe UI',
+                        'display': 'block'
+                    });
+
+                if (chartWidth <= maxPos) {
+                    this.popoverEl
+                        .css({
+                            'left': xposition - scope.svgObj.toolTipWeight + 'px'
+                        });
+                    console.log(this.popoverEl);
+                }
+                $("#tip_" + scope.$id).show()
+            };
 
             //#region  Next level development function for Tool-tip
             scope.getScrollParent = function (node) {
@@ -276,14 +313,20 @@ appChartDirective.directive("svgChart", function ($filter, $compile) {
                     return null; 0
                 } else if (isScrollable && node.scrollHeight >= node.clientHeight) {
                     if (angular.isUndefined(node.id) || node.id === "") {
-                        $(node).attr('id', 'barscrollparentid');
+                        $(node).attr('id', 'barscrollparentid_' + scope.$id);
                     }
                     const scrollLeft = $("#" + node.id).scrollLeft();
                     const scrollTop = $("#" + node.id).scrollTop();
                     if ((node.scrollHeight - node.clientHeight) > 0) {
-                        scope.chartscrollTop = ((scrollTop !== undefined) ? scrollTop : 0);
+                        scope.chartScrollTop = ((scrollTop !== undefined) ? scrollTop : 0);
                         scope.TotalScrollTop = ((node.scrollHeight - node.clientHeight) !== undefined ? (node.scrollHeight - node.clientHeight) : 0);
-                        scope.hasscroll = true;
+                        scope.hasScroll = true;
+                        var el = document.getElementById(node.id);
+                        if (el) {
+                            el.className += el.className ? ' barscrollparentclass_' + scope.$id : ' barscrollparentclass_' + scope.$id;
+                        }
+
+                        $("#" + node.id).attr('hasScroll', 'true');
                     }
                     return node;
                 }
@@ -291,44 +334,28 @@ appChartDirective.directive("svgChart", function ($filter, $compile) {
                 return scope.getScrollParent(node.parentNode) || document.body;
             };
             scope.setScrollTop = function () {
-                if (scope.scrollableparentid !== "") {
-                    $('#' + scope.scrollableparentid).scrollTop(scope.scrollHeight - scope.clientHeight);
+                if (scope.scrollableParentId !== "") {
+                    $('#' + scope.scrollableParentId).scrollTop(scope.scrollHeight - scope.clientHeight);
                 }
             };
-            scope.determineStepSize = function (maxDatasetValue) {
-                var maxStepTemp = Math.ceil(maxDatasetValue / scope.svgobj.maxTicksLimit);
-                // Determine what the step should be based on the maxStepTemp value
-                if (maxStepTemp > 4000000) step = 8000000;
-                else if (maxStepTemp > 2000000) step = 4000000;
-                else if (maxStepTemp > 1000000) step = 2000000;
-                else if (maxStepTemp > 500000) step = 1000000;
-                else if (maxStepTemp > 250000) step = 500000;
-                else if (maxStepTemp > 100000) step = 200000;
-                else if (maxStepTemp > 50000) step = 100000;
-                else if (maxStepTemp > 25000) step = 50000;
-                else if (maxStepTemp > 10000) step = 20000;
-                else if (maxStepTemp > 5000) step = 10000;
-                else if (maxStepTemp > 2500) step = 5000;
-                else if (maxStepTemp > 1000) step = 2000;
-                else if (maxStepTemp > 500) step = 1000;
-                else step = 500;
-                return step;
+            scope.getScroll = function () {
+                if (scope.scrollableParentId !== "") {
+                    const scrollTop = $("#" + scope.scrollableParentId).scrollTop();
+                    scope.chartScrollTop = (scrollTop !== undefined ? scrollTop : 0);
+                    scope.TotalScrollTop = ((scope.scrollHeight - scope.clientHeight) !== undefined ? (scope.scrollHeight - scope.clientHeight) : 0);
+                }
             };
             //#endregion
 
             scope.$root.$on('barchart-refresh', function () {
                 scope.drawBarChart();
             })
-
-
         },
         post: function (scope) {
             scope.$on('barchart-refresh', function (event, data) {
                 alert('hi post');
             });
         },
-        // template: '<svg id="svgcontainer" height="256" width="100%"></svg>'
-        // template: '<div style="position: relative; width: 100%;" id="svgparentdiv"> <svg id="svgcontainer" height="256" width="100%"></svg> </div>'
-        template: '<g id="circle-group"> <svg id="svgcontainer" height="256" width="100%"></svg> </g>'
+        template: '<div style="position: relative; width: 100%;" id="svgparentdiv_{{$id}}"> <svg id="svgcontainer_{{$id}}" height="256" width="100%"></svg> </div>'
     };
 });

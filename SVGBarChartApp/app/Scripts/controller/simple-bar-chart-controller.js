@@ -1,94 +1,121 @@
 ﻿'use strict';
 barchartapp.controller('barchartController', function ($rootScope, $scope, $filter, $http) {
     $scope.initChart = function () {
-        $scope.chartDataList = [
-            {
-                surname: '06 Jun',
-                value: 100,
-                "lastUpdated": new Date('2019-06-03 02:01:10')
-            },
-            {
-                surname: '06 Jun',
-                value: 100,
-                "lastUpdated": new Date("2019-06-03 02:01:10")
-            },
-            { surname: 'b', value: 80, "lastUpdated": new Date("2019-06-03 02:01:20") },
-            { surname: 'c', value: 90, "lastUpdated": new Date("2019-06-02 02:01:30") },
-            { surname: 'd', value: 75, "lastUpdated": new Date("2019-06-02 02:01:40") },
-            { surname: 'e', value: 78, "lastUpdated": new Date("2019-06-02 02:01:50") },
-            { surname: 'l', value: 22, "lastUpdated": new Date("2019-06-10 02:03:12") },
-            { surname: 'f', value: 20, "lastUpdated": new Date("2019-06-01 02:02:59") },
-            { surname: 'g', value: 50, "lastUpdated": new Date("2019-06-01 02:02:45") },
-            { surname: 'h', value: 22, "lastUpdated": new Date("2019-06-04 02:02:40") },
-            { surname: 'i', value: 23, "lastUpdated": new Date("2019-06-05 02:02:32") },
-            { surname: 'j', value: 21, "lastUpdated": new Date("2019-01-06 02:03:10") },
-            { surname: 'k', value: 23, "lastUpdated": new Date("2019-06-06 02:03:12") },
-            {
-                surname: '03 Aug',
-                value: 100,
-                "lastUpdated": new Date("2019-08-03 02:01:10")
-            },
-            { surname: 'N', value: 55, "lastUpdated": new Date("2019-04-03 02:01:20") },
-            { surname: 'O', value: 15, "lastUpdated": new Date("2019-02-02 02:01:30") },
-            { surname: 'P', value: 35, "lastUpdated": new Date("2019-04-02 02:01:40") },
-            { surname: 'Q', value: 25, "lastUpdated": new Date("2019-09-02 02:01:50") },
-            { surname: 'R', value: 45, "lastUpdated": new Date("2019-02-10 02:03:12") },
-            { surname: 's', value: 22, "lastUpdated": new Date("2019-11-01 02:02:59") },
-            {
-                surname: '11 Dec',
-                value: 23,
-                "lastUpdated": new Date("2019-12-01 02:02:45")
-            },
-            { surname: 'u', value: 21, "lastUpdated": new Date("2019-03-04 02:02:40") },
-            { surname: 'v', value: 23, "lastUpdated": new Date("2019-08-05 02:02:32") },
-            { surname: 'w', value: 22, "lastUpdated": new Date("2019-05-06 02:03:10") },
-            { surname: 'x', value: 50, "lastUpdated": new Date("2019-06-06 02:03:11") },
-            { surname: 'a1', value: 55, "lastUpdated": new Date("2019-06-06 02:03:11") },
-            { surname: 'b1', value: 15, "lastUpdated": new Date("2019-06-06 02:03:11") },
-            { surname: 'c1', value: 35, "lastUpdated": new Date("2019-06-06 02:03:11") },
-            { surname: 'e1', value: 25, "lastUpdated": new Date("2019-06-06 02:03:11") },
-            { surname: 'g1', value: 45, "lastUpdated": new Date("2019-06-06 02:03:11") },
-            { surname: 'f1', value: 22, "lastUpdated": new Date("2019-06-06 02:03:11") },
-            { surname: 'h1', value: 23, "lastUpdated": new Date("2019-06-06 02:03:11") },
-            { surname: 't1', value: 21, "lastUpdated": new Date("2019-06-06 02:03:11") },
-            { surname: 'j1', value: 23, "lastUpdated": new Date("2019-06-06 02:03:11") },
-            { 
-                surname: '02 Dec', 
-                value: 22, 
-                "lastUpdated": new Date("2019-06-06 02:03:11") 
-            },
-            { 
-                surname: '31 Dec', 
-                value: 23, 
-                "lastUpdated": new Date("2019-12-01 02:02:45") 
-            },
-            { 
-                surname: '03 Dec', 
-                value: 21, 
-                "lastUpdated": new Date("2019-03-04 02:02:40") 
-            },
-            { 
-                surname: '011 Dec', 
-                value: 23, 
-                "lastUpdated": new Date("2019-08-05 02:02:32") 
-            },
-            { 
-                surname: '21 Dec', 
-                value: 22, 
-                "lastUpdated": new Date("2019-05-06 02:03:10") 
-            },
-            { 
-                surname: '05 Dec', 
-                value: 50, 
-                "lastUpdated": new Date("2019-06-06 02:03:11") 
-            },
-            { 
-                surname: '01 jun', 
-                value: 55, 
-                "lastUpdated": new Date("2019-06-06 02:03:11") 
-            },
+        // $scope.chartDataList = [
+        //     {
+        //         surname: '06 Jun',
+        //         value: 100,
+        //         "lastUpdated": new Date('2019-06-03 02:01:10')
+        //     },
+        //     {
+        //         surname: '06 Jun',
+        //         value: 100,
+        //         "lastUpdated": new Date("2019-06-03 02:01:10")
+        //     },
+        //     { surname: 'b', value: 80, "lastUpdated": new Date("2019-06-03 02:01:20") },
+        //     { surname: 'c', value: 90, "lastUpdated": new Date("2019-06-02 02:01:30") },
+        //     { surname: 'd', value: 75, "lastUpdated": new Date("2019-06-02 02:01:40") },
+        //     { surname: 'e', value: 78, "lastUpdated": new Date("2019-06-02 02:01:50") },
+        //     { surname: 'l', value: 22, "lastUpdated": new Date("2019-06-10 02:03:12") },
+        //     { surname: 'f', value: 20, "lastUpdated": new Date("2019-06-01 02:02:59") },
+        //     { surname: 'g', value: 50, "lastUpdated": new Date("2019-06-01 02:02:45") },
+        //     { surname: 'h', value: 22, "lastUpdated": new Date("2019-06-04 02:02:40") },
+        //     { surname: 'i', value: 23, "lastUpdated": new Date("2019-06-05 02:02:32") },
+        //     { surname: 'j', value: 21, "lastUpdated": new Date("2019-01-06 02:03:10") },
+        //     { surname: 'k', value: 23, "lastUpdated": new Date("2019-06-06 02:03:12") },
+        //     {
+        //         surname: '03 Aug',
+        //         value: 100,
+        //         "lastUpdated": new Date("2019-08-03 02:01:10")
+        //     },
+        //     { surname: 'N', value: 55, "lastUpdated": new Date("2019-04-03 02:01:20") },
+        //     { surname: 'O', value: 15, "lastUpdated": new Date("2019-02-02 02:01:30") },
+        //     { surname: 'P', value: 35, "lastUpdated": new Date("2019-04-02 02:01:40") },
+        //     { surname: 'Q', value: 25, "lastUpdated": new Date("2019-09-02 02:01:50") },
+        //     { surname: 'R', value: 45, "lastUpdated": new Date("2019-02-10 02:03:12") },
+        //     { surname: 's', value: 22, "lastUpdated": new Date("2019-11-01 02:02:59") },
+        //     {
+        //         surname: '11 Dec',
+        //         value: 23,
+        //         "lastUpdated": new Date("2019-12-01 02:02:45")
+        //     },
+        //     { surname: 'u', value: 21, "lastUpdated": new Date("2019-03-04 02:02:40") },
+        //     { surname: 'v', value: 23, "lastUpdated": new Date("2019-08-05 02:02:32") },
+        //     { surname: 'w', value: 22, "lastUpdated": new Date("2019-05-06 02:03:10") },
+        //     { surname: 'x', value: 50, "lastUpdated": new Date("2019-06-06 02:03:11") },
+        //     { surname: 'a1', value: 55, "lastUpdated": new Date("2019-06-06 02:03:11") },
+        //     { surname: 'b1', value: 15, "lastUpdated": new Date("2019-06-06 02:03:11") },
+        //     { surname: 'c1', value: 35, "lastUpdated": new Date("2019-06-06 02:03:11") },
+        //     { surname: 'e1', value: 25, "lastUpdated": new Date("2019-06-06 02:03:11") },
+        //     { surname: 'g1', value: 45, "lastUpdated": new Date("2019-06-06 02:03:11") },
+        //     { surname: 'f1', value: 22, "lastUpdated": new Date("2019-06-06 02:03:11") },
+        //     { surname: 'h1', value: 23, "lastUpdated": new Date("2019-06-06 02:03:11") },
+        //     { surname: 't1', value: 21, "lastUpdated": new Date("2019-06-06 02:03:11") },
+        //     { surname: 'j1', value: 23, "lastUpdated": new Date("2019-06-06 02:03:11") },
+        //     { 
+        //         surname: '02 Dec', 
+        //         value: 22, 
+        //         "lastUpdated": new Date("2019-06-06 02:03:11") 
+        //     },
+        //     { 
+        //         surname: '31 Dec', 
+        //         value: 23, 
+        //         "lastUpdated": new Date("2019-12-01 02:02:45") 
+        //     },
+        //     { 
+        //         surname: '03 Dec', 
+        //         value: 21, 
+        //         "lastUpdated": new Date("2019-03-04 02:02:40") 
+        //     },
+        //     { 
+        //         surname: '011 Dec', 
+        //         value: 23, 
+        //         "lastUpdated": new Date("2019-08-05 02:02:32") 
+        //     },
+        //     { 
+        //         surname: '21 Dec', 
+        //         value: 22, 
+        //         "lastUpdated": new Date("2019-05-06 02:03:10") 
+        //     },
+        //     { 
+        //         surname: '05 Dec', 
+        //         value: 50, 
+        //         "lastUpdated": new Date("2019-06-06 02:03:11") 
+        //     },
+        //     { 
+        //         surname: '01 jun', 
+        //         value: 55, 
+        //         "lastUpdated": new Date("2019-06-06 02:03:11") 
+        //     },
 
-        ];
+        // ];
+         $scope.chartDataList = [
+               { surname: 'a', value: 100, "lastUpdated": new Date("2019-06-03 02:01:10") },
+               { surname: 'b', value: 33, "lastUpdated": new Date("2019-06-03 02:01:20") },
+               { surname: 'c', value: 10, "lastUpdated": new Date("2019-06-02 02:01:30") },
+               { surname: 'd', value: 13, "lastUpdated": new Date("2019-06-02 02:01:40") },
+               { surname: 'e', value: 22, "lastUpdated": new Date("2019-06-02 02:01:50") },
+               { surname: 'l', value: 22, "lastUpdated": new Date("2019-06-10 02:03:12") },
+               { surname: 'f', value: 20, "lastUpdated": new Date("2019-06-01 02:02:59") },
+               { surname: 'g', value: 50, "lastUpdated": new Date("2019-06-01 02:02:45") },
+               { surname: 'h', value: 22, "lastUpdated": new Date("2019-06-04 02:02:40") },
+               { surname: 'i', value: 23, "lastUpdated": new Date("2019-06-05 02:02:32") },
+               { surname: 'j', value: 21, "lastUpdated": new Date("2019-01-06 02:03:10") },
+               { surname: 'k', value: 23, "lastUpdated": new Date("2019-06-06 02:03:12") },
+               { surname: 'M', value: 50, "lastUpdated": new Date("2019-08-03 02:01:10") },
+               { surname: 'N', value: 55, "lastUpdated": new Date("2019-04-03 02:01:20") },
+               { surname: 'O', value: 15, "lastUpdated": new Date("2019-02-02 02:01:30") },
+               { surname: 'P', value: 35, "lastUpdated": new Date("2019-04-02 02:01:40") },
+               { surname: 'Q', value: 25, "lastUpdated": new Date("2019-09-02 02:01:50") },
+               { surname: 'R', value: 45, "lastUpdated": new Date("2019-02-10 02:03:12") },
+               { surname: 's', value: 22, "lastUpdated": new Date("2019-11-01 02:02:59") },
+               { surname: 't', value: 23, "lastUpdated": new Date("2019-12-01 02:02:45") },
+               { surname: 'u', value: 21, "lastUpdated": new Date("2019-03-04 02:02:40") },
+               { surname: 'v', value: 23, "lastUpdated": new Date("2019-08-05 02:02:32") },
+               { surname: 'w', value: 22, "lastUpdated": new Date("2019-05-06 02:03:10") },
+               { surname: 'x', value: 50, "lastUpdated": new Date("2019-06-06 02:03:11") },
+
+            ];
         //$scope.chartDataList = [];
         // debugger;
         //$scope.getdata(event);
