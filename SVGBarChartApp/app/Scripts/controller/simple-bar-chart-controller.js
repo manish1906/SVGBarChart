@@ -52,40 +52,40 @@ barchartapp.controller('barchartController', function ($rootScope, $scope, $filt
         //     { surname: 'h1', value: 23, "lastUpdated": new Date("2019-06-06 02:03:11") },
         //     { surname: 't1', value: 21, "lastUpdated": new Date("2019-06-06 02:03:11") },
         //     { surname: 'j1', value: 23, "lastUpdated": new Date("2019-06-06 02:03:11") },
-        //     { 
-        //         surname: '02 Dec', 
-        //         value: 22, 
-        //         "lastUpdated": new Date("2019-06-06 02:03:11") 
+        //     {
+        //         surname: '02 Dec',
+        //         value: 22,
+        //         "lastUpdated": new Date("2019-06-06 02:03:11")
         //     },
-        //     { 
-        //         surname: '31 Dec', 
-        //         value: 23, 
-        //         "lastUpdated": new Date("2019-12-01 02:02:45") 
+        //     {
+        //         surname: '31 Dec',
+        //         value: 23,
+        //         "lastUpdated": new Date("2019-12-01 02:02:45")
         //     },
-        //     { 
-        //         surname: '03 Dec', 
-        //         value: 21, 
-        //         "lastUpdated": new Date("2019-03-04 02:02:40") 
+        //     {
+        //         surname: '03 Dec',
+        //         value: 21,
+        //         "lastUpdated": new Date("2019-03-04 02:02:40")
         //     },
-        //     { 
-        //         surname: '011 Dec', 
-        //         value: 23, 
-        //         "lastUpdated": new Date("2019-08-05 02:02:32") 
+        //     {
+        //         surname: '011 Dec',
+        //         value: 23,
+        //         "lastUpdated": new Date("2019-08-05 02:02:32")
         //     },
-        //     { 
-        //         surname: '21 Dec', 
-        //         value: 22, 
-        //         "lastUpdated": new Date("2019-05-06 02:03:10") 
+        //     {
+        //         surname: '21 Dec',
+        //         value: 22,
+        //         "lastUpdated": new Date("2019-05-06 02:03:10")
         //     },
-        //     { 
-        //         surname: '05 Dec', 
-        //         value: 50, 
-        //         "lastUpdated": new Date("2019-06-06 02:03:11") 
+        //     {
+        //         surname: '05 Dec',
+        //         value: 50,
+        //         "lastUpdated": new Date("2019-06-06 02:03:11")
         //     },
-        //     { 
-        //         surname: '01 jun', 
-        //         value: 55, 
-        //         "lastUpdated": new Date("2019-06-06 02:03:11") 
+        //     {
+        //         surname: '01 jun',
+        //         value: 55,
+        //         "lastUpdated": new Date("2019-06-06 02:03:11")
         //     },
 
         // ];
@@ -116,6 +116,32 @@ barchartapp.controller('barchartController', function ($rootScope, $scope, $filt
                { surname: 'x', value: 50, "lastUpdated": new Date("2019-06-06 02:03:11") },
 
             ];
+            $scope.chartDataList2 = [
+                { surname: 'a', value: 80, "lastUpdated": new Date("2019-06-03 02:01:10") },
+                { surname: 'b', value: 45, "lastUpdated": new Date("2019-06-03 02:01:20") },
+                { surname: 'c', value: 30, "lastUpdated": new Date("2019-06-02 02:01:30") },
+                { surname: 'd', value: 20, "lastUpdated": new Date("2019-06-02 02:01:40") },
+                { surname: 'e', value: 50, "lastUpdated": new Date("2019-06-02 02:01:50") },
+                { surname: 'l', value: 59, "lastUpdated": new Date("2019-06-10 02:03:12") },
+              //  { surname: 'f', value: 100, "lastUpdated": new Date("2019-06-01 02:02:59") },
+                { surname: 'g', value: 34, "lastUpdated": new Date("2019-06-01 02:02:45") },
+                { surname: 'h', value: 75, "lastUpdated": new Date("2019-06-04 02:02:40") },
+                { surname: 'i', value: 13, "lastUpdated": new Date("2019-06-05 02:02:32") },
+                { surname: 'j', value: 21, "lastUpdated": new Date("2019-01-06 02:03:10") },
+               // { surname: 'k', value: 23, "lastUpdated": new Date("2019-06-06 02:03:12") },
+                { surname: 'M', value: 87, "lastUpdated": new Date("2019-08-03 02:01:10") },
+                { surname: 'N', value: 45, "lastUpdated": new Date("2019-04-03 02:01:20") },
+                { surname: 'O', value: 15, "lastUpdated": new Date("2019-02-02 02:01:30") },
+                { surname: 'P', value: 35, "lastUpdated": new Date("2019-04-02 02:01:40") },
+                { surname: 'Q', value: 25, "lastUpdated": new Date("2019-09-02 02:01:50") },
+                { surname: 'R', value: 45, "lastUpdated": new Date("2019-02-10 02:03:12") },
+                { surname: 's', value: 76, "lastUpdated": new Date("2019-11-01 02:02:59") },
+                { surname: 't', value: 67, "lastUpdated": new Date("2019-12-01 02:02:45") },
+                { surname: 'u', value: 29, "lastUpdated": new Date("2019-03-04 02:02:40") },
+                { surname: 'v', value: 12, "lastUpdated": new Date("2019-08-05 02:02:32") },
+                { surname: 'w', value: 35, "lastUpdated": new Date("2019-05-06 02:03:10") },
+                { surname: 'x', value: 59, "lastUpdated": new Date("2019-06-06 02:03:11") },
+             ];
         //$scope.chartDataList = [];
         // debugger;
         //$scope.getdata(event);
@@ -144,7 +170,7 @@ barchartapp.controller('barchartController', function ($rootScope, $scope, $filt
         //        debugger;
         //        //callback(xmlHttp.responseText);
         //}
-        //xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+        //xmlHttp.open("GET", theUrl, true); // true for asynchronous
         //xmlHttp.withCredentials = true;
         //xmlHttp.send({ 'request': "Authorization Bearer 8ab314a6a2f8e7e9f643ffc0b174a314160483bd" });
     }
@@ -156,10 +182,10 @@ barchartapp.controller('barchartController', function ($rootScope, $scope, $filt
             { surname: 'Q', value: 205, "lastUpdated": new Date("2019-09-02 02:01:50") },
             { surname: 'R', value: 405, "lastUpdated": new Date("2019-02-10 02:03:12") },
             { surname: 's', value: 202, "lastUpdated": new Date("2019-11-01 02:02:59") },
-            { 
-                surname: '01 Dec', 
-                value: 203, 
-                "lastUpdated": new Date("2019-12-01 02:02:45") 
+            {
+                surname: '01 Dec',
+                value: 203,
+                "lastUpdated": new Date("2019-12-01 02:02:45")
             },
             { surname: 'u', value: 201, "lastUpdated": new Date("2019-03-04 02:02:40") },
             { surname: 'v', value: 203, "lastUpdated": new Date("2019-08-05 02:02:32") },

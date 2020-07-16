@@ -5,6 +5,7 @@ appChartDirective.directive("svgChart", function ($filter, $compile) {
 
         scope: {
             chartDataItem: '=items',
+            chartDataItem2: '=items2',
             xAxisItemsKey: '@xaxisitemskey',
             yAxisItemsKey: '@yaxisitemskey',
             orderByKey: '@orderbykey'
@@ -43,10 +44,14 @@ appChartDirective.directive("svgChart", function ($filter, $compile) {
                 if ($("#tip_" + scope.$id).length > 0) {
                     $("#tip_" + scope.$id).remove();
                 }
+                // var final=scope.chartDataList.concat(scope.chartDataList2);
+                // console.log(final)
                 scope.svgObj = {
                     padding: 20,
                     gridColor: "#2196F3",
+                    gridColor2: "#3f51b5",
                     data: $filter('orderBy')(scope.chartDataItem, scope.orderByKey, true),
+                    data2: $filter('orderBy')(scope.chartDataItem2, scope.orderByKey, true),
                     barWidth: 50,
                     maximumDataValue: 100,
                     maxTicksLimit: 5,
@@ -61,26 +66,43 @@ appChartDirective.directive("svgChart", function ($filter, $compile) {
                 scope.barSize = scope.svgObj.barWidth;
                 var svgChartWidth = scope.width - 2 * scope.padding;
                 var svgChartHeight = scope.height - 2 * scope.padding;
-
+                console.log(svgChartWidth)
                 var div = document.getElementById("svgcontainer_" + scope.$id);
                 var rect = div.getBoundingClientRect();
                 scope.x = rect.left;
                 scope.y = rect.top;
 
                 //Calculate the possible max items/bars to be print and assigned to the data-list
-                scope.totalChartBars = Math.floor(svgChartWidth / scope.svgObj.barWidth);
+                scope.totalChartBars = Math.floor(svgChartWidth /(2*scope.svgObj.barWidth));
                 scope.remainNumberOfBars = scope.totalChartBars - scope.svgObj.data.length;
                 scope.chartDataList = $filter('limitTo')(scope.svgObj.data, scope.totalChartBars, 0);
+                scope.chartDataList2 = $filter('limitTo')(scope.svgObj.data2, scope.totalChartBars, 0);
                 var length = scope.chartDataList.length;
-              // debugger
+              console.log(scope.totalChartBars)
+                // debugger
                 //Add empty bars at left side if chart does not have sufficient bars
                 if (scope.totalChartBars > scope.chartDataList.length) {
                     for (i = 0; i < scope.totalChartBars - length; i++) {
                         scope.chartDataList.push({ [scope.xAxisItemsKey]: "0", "value": "0", "index": length + i });
+                        scope.chartDataList2.push({ [scope.xAxisItemsKey]: "0", "value": "0", "index": length + i });
+                    }
+                }
+                var final=scope.chartDataList.concat(scope.chartDataList2);
+                console.log(final)
+
+                for(i=0;i<scope.totalChartBars;i++)
+                {
+                    surName = scope.chartDataList[i][scope.xAxisItemsKey];
+                    surName2 = scope.chartDataList2[i][scope.xAxisItemsKey];
+                    if(surName!=surName2)
+                    {
+                        scope.chartDataList2.splice(i,0,{"surname":surName,"value":0});
                     }
                 }
                 scope.drawYAxisMarkers(svgChartHeight);
                 scope.drawChartWithCalculation(svgChartHeight);
+                console.log(scope.chartDataList);
+                console.log(scope.chartDataList2)
             };
             //Ends Here
 
@@ -110,21 +132,34 @@ appChartDirective.directive("svgChart", function ($filter, $compile) {
             };
             //Ends Here
 
-            //Set the x, y, h and w to draw barchart rectangle 
+            //Set the x, y, h and w to draw barchart rectangle
             scope.drawChartWithCalculation = function (svgChartHeight) {
                 for (var i = 0; i < scope.totalChartBars; i++) {
                     const remain = scope.totalChartBars - 1;
+
                     barChartVal = scope.chartDataList[remain - i][scope.yAxisItemsKey];
+
                     barChartHeight = (barChartVal * svgChartHeight / scope.maxDataValue);
-                    barChartX = 2 * scope.padding + i * scope.barSize;
+                    barChartX = 2 * scope.padding + i * 2*scope.barSize;
                     barChartY = (scope.padding + svgChartHeight - barChartHeight);
-                    scope.drawRectangleForChart(barChartX, barChartY, scope.barSize - 8, barChartHeight, i);
+                   // debugger
+                    scope.drawRectangleForChart(barChartX, barChartY, scope.barSize - 8, barChartHeight,scope.svgObj.gridColor ,i);
+
+                    barChartVal2 = scope.chartDataList2[remain - i][scope.yAxisItemsKey];
+                    barChartX2 = barChartX+scope.barSize - 8;
+
+                     barChartHeight2 = (barChartVal2 * svgChartHeight / scope.maxDataValue);
+                    barChartY2 = (scope.padding + svgChartHeight - barChartHeight2);
+
+
+                   // debugger
+                    scope.drawRectangleForChart(barChartX2, barChartY2, scope.barSize - 8, barChartHeight2,scope.svgObj.gridColor2,"10"+i);
                 }
                 scope.drawXAxisMarkers(svgChartHeight);
             };
 
             //Draw rectangle and set the mouse event to each and every rectangle
-            scope.drawRectangleForChart = function (x, y, wd, ht, index) {
+            scope.drawRectangleForChart = function (x, y, wd, ht,color,index) {
                 var rect = document.createElementNS("http://www.w3.org/2000/svg", 'rect');
                 rect.setAttribute('id', 'svgrec_' + index + scope.$id);
                 rect.setAttribute('class', 'rec_show');
@@ -132,14 +167,16 @@ appChartDirective.directive("svgChart", function ($filter, $compile) {
                 rect.setAttribute('y', y);
                 rect.setAttribute('width', wd);
                 rect.setAttribute('height', ht);
-                rect.setAttribute('fill', scope.svgObj.gridColor);
+                rect.setAttribute('fill', color);
 
                 //mousemove event on rect element
                 $(rect).mousemove(function (event) {
-                    
-                    rectangle = document.getElementById('svgtext_' + event.target.id.split('_')[1]);
+
+                    rectangle = document.getElementById('svgtext_' + event.target.id.split('_')[1] ||'svgtext_' + event.target.id.split('_10')[1] );
+                  //  debugger
                     $("#tip_" + scope.$id).text("Name: " + rectangle.textContent + " X:" + event.pageX + ", Y:" + event.pageY);
                     document.getElementById('svgrec_' + event.target.id.split('_')[1]).style.opacity = "0.5"
+                   //   document.getElementById('svgrec_' + event.target.id.split('_1')[1]).style.opacity = "0.5"
                     scope.updateToolTipPosition(y, ht, event);
                 });
 
@@ -162,7 +199,7 @@ appChartDirective.directive("svgChart", function ($filter, $compile) {
                 for (var i = 0; i < scope.totalChartBars; i++) {
                     const remain = scope.totalChartBars - 1;
                     const name = scope.chartDataList[remain - i][scope.xAxisItemsKey];
-                    markerXPosition = 2 * scope.padding + ((scope.barSize - 8) / 2) + i * scope.barSize;
+                    markerXPosition = 2 * scope.padding + ((2*scope.barSize - 8) / 2) + i * 2*scope.barSize;
                     markerYPosition = scope.padding + svgChartHeight + 15;
 
                     textElement = document.createElementNS("http://www.w3.org/2000/svg", 'text');
@@ -213,15 +250,15 @@ appChartDirective.directive("svgChart", function ($filter, $compile) {
                 // if (event.pageY + scope.svgObj.toolTipHeight >= y + ht) {
                 //     yPosition = yPosition - scope.svgObj.toolTipHeight;
                 // }
-               
+
                 yPosition = yPosition - scope.svgObj.toolTipHeight - 10;
                 var el = document.getElementsByClassName("barscrollparentclass_" + scope.$id);
                 scope.hasScroll = $(el).attr("hasscroll");
-                
+
                 if (scope.hasScroll) {
                     var parentOffset = parseInt($(el)[0].offsetParent == 'undefined' ? 0 : $(el)[0].offsetParent.offsetTop);
                     div = document.getElementById(scope.scrolledNode.id);
-                    
+
                     if (parentOffset + div.offsetTop + scope.svgObj.toolTipHeight > event.pageY) {
                         yPosition = parentOffset + div.offsetTop;
                     }
@@ -231,14 +268,14 @@ appChartDirective.directive("svgChart", function ($filter, $compile) {
                 } else {
                     div = document.getElementById("svgparentdiv_" + scope.$id);
                     var parentOffset = parseInt($(div)[0].offsetParent == 'undefined' ? 0 : $(div)[0].offsetParent.offsetTop);
-                    
+
                     if (parentOffset + div.offsetTop + scope.svgObj.toolTipHeight > event.pageY) {
                         yPosition = parentOffset+ div.offsetTop + scope.svgObj.padding ;
                         xPosition = event.pageX + 50;
-                    } 
+                    }
                     if (parentOffset + div.offsetTop + event.offsetY + scope.svgObj.toolTipHeight < event.pageY) {
                         yPosition = parentOffset+ div.offsetTop + event.offsetY - scope.svgObj.toolTipHeight;
-                    } 
+                    }
                     if (event.offsetX + scope.svgObj.toolTipWeight > scope.width) {
                         xPosition = xPosition - (2 * scope.svgObj.toolTipWeight);
                     }
