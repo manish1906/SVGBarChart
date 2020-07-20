@@ -11,7 +11,7 @@
     <script src="app.js"></script>
     <script src="Scripts/controller/simple-bar-chart-controller.js"></script>
     <script src="Scripts/directive/app-chart-directive.js"></script>
-    <script src="Scripts/directive/bar-chart-svg.js"></script>
+    <script src="Scripts/directive/multi-bar-chart-svg.js"></script>
     <!-- <script src="Scripts/directive/line-chart-svg.js"></script> -->
     <link rel="stylesheet" type="text/css" href="Style/appChart.css">
 
@@ -58,12 +58,13 @@
 <body ng-app="barchartapp">
     <div ng-controller="barchartController as ctrl" ng-init="initChart()">
         <p> </p>
-         <div >
+        <!-- class="bchartcontainer body" -->
+         <div  >
             <!-- <button ng-click="myFunc1()">data-1</button>
             <button ng-click="myFunc2()">data-2</button> -->
         <div id="barchartid" >
-            <svg-chart items="chartDataList" items2="chartDataList2" xaxisitemskey="surname" yaxisitemskey="value"
-                                orderbykey="lastUpdated"></svg-chart>
+            <svg-multi-bar-chart items="chartDataList" items2="chartDataList2" xaxisitemskey="surname" yaxisitemskey="value"
+                                orderbykey="lastUpdated"></svg-multi-bar-chart>
             <!-- <svg-line-chart items="chartDataList" xaxisitemskey="surname" yaxisitemskey="value" orderbykey="lastUpdated">
             </svg-line-chart> -->
         </div>
@@ -84,13 +85,16 @@
                         <div class="chart" id="barchartid1">
                              <!-- <svg-line-chart items="chartDataList" xaxisitemskey="surname" yaxisitemskey="value" orderbykey="lastUpdated">
             </svg-line-chart> -->
+            <svg-multi-bar-chart items="chartDataList" items2="chartDataList2" xaxisitemskey="surname" yaxisitemskey="value"
+            orderbykey="lastUpdated"></svg-multi-bar-chart>
                         </div>
 
                 </div>
 
                 <div class="offset-all">
                     <div class="chart" id="barchartid2">
-                        <!-- <svg-chart items="chartDataList" xaxisitemskey="surname" yaxisitemskey="value" orderbykey="lastUpdated"></svg-chart> -->
+                        <svg-multi-bar-chart items="chartDataList" items2="chartDataList2" xaxisitemskey="surname" yaxisitemskey="value"
+                        orderbykey="lastUpdated"></svg-multi-bar-chart>
                         <!-- <svg-line-chart items="chartDataList" xaxisitemskey="surname" yaxisitemskey="value" orderbykey="lastUpdated"></svg-line-chart> -->
                     </div>
                 </div>
